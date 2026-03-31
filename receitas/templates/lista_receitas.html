@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Receitas Cadastradas</h2>
+    <a href="{% url 'receita_create' %}" class="btn btn-success">+ Nova Receita</a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <table class="table table-striped table-hover m-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Descrição</th>
+                    <th>Tipo</th>
+                    <th>Custo</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for receita in receitas %}
+                <tr>
+                    <td>{{ receita.id }}</td>
+                    <td>{{ receita.nome }}</td>
+                    <td>{{ receita.descricao }}</td>
+                    <td><span class="badge bg-secondary">{{ receita.tipo_receita }}</span></td>
+                    <td>R$ {{ receita.custo }},00</td>
+                    <td>{{ receita.data_registro|date:"d/m/Y" }}</td>
+                    <td>
+                        <a href="{% url 'receita_update' receita.id %}" class="btn btn-primary btn-sm">Editar</a>
+                        <a href="{% url 'receita_delete' receita.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="text-center py-3">Nenhuma receita cadastrada.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
