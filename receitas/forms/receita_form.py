@@ -1,5 +1,5 @@
 from django import forms
-from .models import Receita
+from receitas.models import Receita
 
 class ReceitaForm(forms.ModelForm):
     class Meta:

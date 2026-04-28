@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Relatório de Receitas</title>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 2cm;
+        }
+        body {
+            font-family: Helvetica, sans-serif;
+            font-size: 12px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #343a40;
+            color: white;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 10px;
+            text-align: right;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Sistema de Gerenciamento de Receitas</h2>
+        <h3>Relatório de Receitas Cadastradas</h3>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Tipo</th>
+                <th>Custo</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for receita in receitas %}
+            <tr>
+                <td>{{ receita.id }}</td>
+                <td>{{ receita.nome }}</td>
+                <td>{{ receita.tipo_receita }}</td>
+                <td>R$ {{ receita.custo }},00</td>
+                <td>{{ receita.data_registro|date:"d/m/Y" }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 20px;">Nenhuma receita encontrada para os filtros atuais.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        Gerado por: {{ nome_usuario }}
+    </div>
+</body>
+</html>
