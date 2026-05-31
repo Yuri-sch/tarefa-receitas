@@ -9,7 +9,7 @@ class Receita(models.Model):
 
     class Meta:
         db_table = 'receita'
-        app_label = 'receitas' # Ajuda o Django a mapear o model
+        app_label = 'receitas'
 
     def __str__(self):
         return f"{self.nome} ({self.tipo_receita})"

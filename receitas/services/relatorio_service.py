@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
-# Envia um e-mail notificando a criação ou atualização de uma receita.
 def gerar_pdf_receitas(receitas, nome_usuario):
     contexto = {
         'receitas': receitas,

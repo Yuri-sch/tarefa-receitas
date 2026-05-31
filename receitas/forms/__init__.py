@@ -1,1 +1,1 @@
-from .receita_form import ReceitaForm
+from .receita_form import ReceitaForm # noqa: F401

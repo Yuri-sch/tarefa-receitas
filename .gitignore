@@ -1,5 +1,16 @@
+# Ambientes Virtuais
 venv/
-__pycache__/
+env/
+
+# Banco de dados local (para não mandar as receitas de teste do seu PC)
 db.sqlite3
-*.pyc
+
+# Variáveis de ambiente
 .env
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Arquivos de cobertura de teste
+.coverage

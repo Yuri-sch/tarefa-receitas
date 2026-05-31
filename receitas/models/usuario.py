@@ -9,7 +9,7 @@ class Usuario(models.Model):
 
     class Meta:
         db_table = 'usuario'
-        app_label = 'receitas' # Ajuda o Django a mapear o model
+        app_label = 'receitas'
 
     def __str__(self):
         return self.nome
