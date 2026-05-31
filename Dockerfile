@@ -8,6 +8,9 @@ ENV PYTHONUNBUFFERED 1
 # Define a pasta de trabalho dentro do contêiner
 WORKDIR /app
 
+# Instala os compiladores C e as dependências gráficas do Cairo para gerar PDFs
+RUN apt-get update && apt-get install -y gcc pkg-config libcairo2-dev && rm -rf /var/lib/apt/lists/*
+
 # Copia o arquivo de dependências e instala tudo
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
