@@ -1,10 +1,19 @@
-    pipeline {
+pipeline {
     agent any
+
+    // Aqui criamos o "Menu" inicial com caixas de seleção
+    parameters {
+        booleanParam(name: 'RUN_CI', defaultValue: true, description: '1. Rodar Testes e Validação de Código (CI)?')
+        booleanParam(name: 'DEPLOY_HOMOLOG', defaultValue: false, description: '2. Fazer Deploy no Ambiente de HOMOLOGAÇÃO (Porta 8001)?')
+        booleanParam(name: 'DEPLOY_PROD', defaultValue: false, description: '3. Fazer Deploy no Ambiente de PRODUÇÃO (Porta 8000)?')
+    }
 
     stages {
         stage('Integração Contínua (CI)') {
+            // Só roda se a caixa RUN_CI estiver marcada
+            when { expression { params.RUN_CI } }
             steps {
-                echo 'Iniciando testes e validação de qualidade (Linter)...'
+                echo 'Iniciando testes e validação de qualidade...'
                 sh '''
                     python3 -m venv venv
                     . venv/bin/activate
@@ -15,17 +24,11 @@
             }
         }
         
-        stage('Aprovar Deploy: Homologação') {
-            steps {
-                // Esta é a pausa manual exigida na sua avaliação
-                input message: 'O código passou nos testes! Deseja fazer o Deploy em HOMOLOGAÇÃO (Porta 8001)?', ok: 'Fazer Deploy'
-            }
-        }
-
         stage('Deploy Homologação') {
+            // Só roda se a caixa DEPLOY_HOMOLOG estiver marcada
+            when { expression { params.DEPLOY_HOMOLOG } }
             steps {
                 echo 'Subindo ambiente de Homologação...'
-                // Puxa as senhas do cofre do Jenkins de forma segura e injeta no .env
                 withCredentials([usernamePassword(credentialsId: 'credenciais-gmail', passwordVariable: 'GMAIL_PASS', usernameVariable: 'GMAIL_USER')]) {
                     sh '''
                         cat <<EOF > .env
@@ -41,20 +44,16 @@ EOF
                         docker-compose -p homolog down -v
                         docker-compose -p homolog up -d --build
                         sleep 5
+                        docker-compose -p homolog exec -T web python manage.py migrate
                         docker-compose -p homolog exec -T web python insert_dados.py
                     '''
                 }
             }
         }
 
-        stage('Aprovar Deploy: Produção') {
-            steps {
-                // Segunda pausa manual antes de afetar o usuário final
-                input message: 'A Homologação foi validada pela equipe! Deseja fazer o Deploy em PRODUÇÃO (Porta 8000)?', ok: 'Fazer Deploy'
-            }
-        }
-
         stage('Deploy Produção') {
+            // Só roda se a caixa DEPLOY_PROD estiver marcada
+            when { expression { params.DEPLOY_PROD } }
             steps {
                 echo 'Subindo ambiente de Produção...'
                 withCredentials([usernamePassword(credentialsId: 'credenciais-gmail', passwordVariable: 'GMAIL_PASS', usernameVariable: 'GMAIL_USER')]) {
@@ -72,6 +71,7 @@ EOF
                         docker-compose -p prod down -v
                         docker-compose -p prod up -d --build
                         sleep 5
+                        docker-compose -p prod exec -T web python manage.py migrate
                         docker-compose -p prod exec -T web python insert_dados.py
                     '''
                 }
