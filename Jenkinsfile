@@ -1,17 +1,8 @@
 pipeline {
     agent any
 
-    // Aqui criamos o "Menu" inicial com caixas de seleção
-    parameters {
-        booleanParam(name: 'RUN_CI', defaultValue: true, description: '1. Rodar Testes e Validação de Código (CI)?')
-        booleanParam(name: 'DEPLOY_HOMOLOG', defaultValue: false, description: '2. Fazer Deploy no Ambiente de HOMOLOGAÇÃO (Porta 8001)?')
-        booleanParam(name: 'DEPLOY_PROD', defaultValue: false, description: '3. Fazer Deploy no Ambiente de PRODUÇÃO (Porta 8000)?')
-    }
-
     stages {
         stage('Integração Contínua (CI)') {
-            // Só roda se a caixa RUN_CI estiver marcada
-            when { expression { params.RUN_CI } }
             steps {
                 echo 'Iniciando testes e validação de qualidade...'
                 sh '''
@@ -24,9 +15,14 @@ pipeline {
             }
         }
         
+        stage('Aprovar Homologação') {
+            steps {
+                // Isso gera a pausa visual e cria o botão verde com o texto personalizado
+                input message: 'O código passou no CI! Criar ambiente de Homologação?', ok: 'Aprovar e Fazer Deploy'
+            }
+        }
+
         stage('Deploy Homologação') {
-            // Só roda se a caixa DEPLOY_HOMOLOG estiver marcada
-            when { expression { params.DEPLOY_HOMOLOG } }
             steps {
                 echo 'Subindo ambiente de Homologação...'
                 withCredentials([usernamePassword(credentialsId: 'credenciais-gmail', passwordVariable: 'GMAIL_PASS', usernameVariable: 'GMAIL_USER')]) {
@@ -41,7 +37,7 @@ EMAIL_HOST_PASSWORD=$GMAIL_PASS
 WEB_PORT=8001
 DB_PORT=5433
 EOF
-                        docker-compose -p homolog down -v
+                        docker-compose -p homolog down
                         docker-compose -p homolog up -d --build
                         sleep 5
                         docker-compose -p homolog exec -T web python manage.py migrate
@@ -51,9 +47,14 @@ EOF
             }
         }
 
+        stage('Aprovar Produção') {
+            steps {
+                // Segunda pausa com botão antes de ir para produção
+                input message: 'A Homologação foi validada! Lançar em Produção?', ok: 'Lançar em Produção'
+            }
+        }
+
         stage('Deploy Produção') {
-            // Só roda se a caixa DEPLOY_PROD estiver marcada
-            when { expression { params.DEPLOY_PROD } }
             steps {
                 echo 'Subindo ambiente de Produção...'
                 withCredentials([usernamePassword(credentialsId: 'credenciais-gmail', passwordVariable: 'GMAIL_PASS', usernameVariable: 'GMAIL_USER')]) {
@@ -68,7 +69,7 @@ EMAIL_HOST_PASSWORD=$GMAIL_PASS
 WEB_PORT=8000
 DB_PORT=5432
 EOF
-                        docker-compose -p prod down -v
+                        docker-compose -p prod down
                         docker-compose -p prod up -d --build
                         sleep 5
                         docker-compose -p prod exec -T web python manage.py migrate
