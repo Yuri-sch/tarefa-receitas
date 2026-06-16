@@ -67,7 +67,7 @@ DB_PASSWORD=senha_prod_real
 EMAIL_HOST_USER=$GMAIL_USER
 EMAIL_HOST_PASSWORD=$GMAIL_PASS
 WEB_PORT=8000
-DB_PORT=5432
+DB_PORT=5434
 EOF
                         docker-compose -p prod down
                         docker-compose -p prod up -d --build
