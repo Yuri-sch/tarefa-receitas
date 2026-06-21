@@ -9,8 +9,8 @@ hoje = date.today().strftime('%Y-%m-%d')
 print("Inserindo usuário...")
 # Alterado para a tabela exata 'usuario' e situacao como texto
 cursor.execute("""
-    INSERT INTO usuario (nome, login, senha, situacao) 
-    VALUES ('Administrador', 'admin', 'senha123', 'Ativo');
+    INSERT INTO usuario (nome, login, senha, email, situacao)
+    VALUES ('Administrador', 'admin', 'senha123', 'yurischaffer028@gmail.com', 'Ativo');
 """)
 
 print("Inserindo 10 receitas...")
