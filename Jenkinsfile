@@ -37,6 +37,7 @@ EMAIL_HOST_PASSWORD=$GMAIL_PASS
 WEB_PORT=8001
 DB_PORT=5433
 EOF
+                        rm -f db.sqlite3
                         docker-compose -p homolog down
                         docker-compose -p homolog up -d --build
                         sleep 5
@@ -69,6 +70,7 @@ EMAIL_HOST_PASSWORD=$GMAIL_PASS
 WEB_PORT=8000
 DB_PORT=5434
 EOF
+                        rm -f db.sqlite3
                         docker-compose -p prod down
                         docker-compose -p prod up -d --build
                         sleep 5
