@@ -1,39 +1,101 @@
-import sqlite3
 from datetime import date
+import django
+import os
 
-conexao = sqlite3.connect('db.sqlite3')
-cursor = conexao.cursor()
+# Avisa o script autônomo sobre onde moram as configurações do Django:
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app_config.settings')
+django.setup()
 
-hoje = date.today().strftime('%Y-%m-%d')
+from receitas.models import Receita, Usuario
 
-print("Inserindo usuário...")
-# Alterado para a tabela exata 'usuario' e situacao como texto
-cursor.execute("""
-    INSERT INTO usuario (nome, login, senha, email, situacao)
-    VALUES ('Administrador', 'admin', 'senha123', 'yurischaffer028@gmail.com', 'Ativo');
-""")
+print("Verificando/Inserindo Usuário admin...")
+usuario, criado = Usuario.objects.get_or_create(
+    login='admin',
+    defaults={
+        'nome': 'Administrador',
+        'senha': 'senha123',
+        'email': 'yurischaffer028@gmail.com',
+        'situacao': 'Ativo',
+    },
+)
+if criado:
+    print("Usuário admin criado no PostgreSQL!")
 
-print("Inserindo 10 receitas...")
-# Alterado para a tabela exata 'receita' e custo como INT
-receitas = [
-    ('Bolo de Cenoura', 'Bolo fofinho com cobertura de chocolate.', hoje, 15, 'doce'),
-    ('Coxinha de Frango', 'Massa de batata com recheio cremoso.', hoje, 5, 'salgada'),
-    ('Brigadeiro', 'Docinho tradicional de leite condensado.', hoje, 2, 'doce'),
-    ('Torta de Frango', 'Torta salgada de liquidificador.', hoje, 25, 'salgada'),
-    ('Pudim de Leite', 'Pudim sem furinhos com calda.', hoje, 12, 'doce'),
-    ('Empadão de Palmito', 'Massa podre que derrete na boca.', hoje, 30, 'salgada'),
-    ('Beijinho', 'Docinho de coco ralado e cravo.', hoje, 2, 'doce'),
-    ('Kibe Frito', 'Kibe tradicional temperado com hortelã.', hoje, 6, 'salgada'),
-    ('Torta de Limão', 'Massa com creme de limão e merengue.', hoje, 22, 'doce'),
-    ('Esfiha de Carne', 'Massa macia com carne moída.', hoje, 4, 'salgada')
+print("Verificando/Inserindo 10 Receitas...")
+hoje = date.today()
+
+lista_receitas = [
+    {
+        'nome': 'Bolo de Cenoura',
+        'descricao': 'Bolo fofinho com cobertura de chocolate.',
+        'custo': 15,
+        'tipo': 'doce',
+    },
+    {
+        'nome': 'Coxinha de Frango',
+        'descricao': 'Massa de batata com recheio cremoso.',
+        'custo': 5,
+        'tipo': 'salgada',
+    },
+    {
+        'nome': 'Brigadeiro',
+        'descricao': 'Docinho tradicional de leite condensado.',
+        'custo': 2,
+        'tipo': 'doce',
+    },
+    {
+        'nome': 'Torta de Frango',
+        'descricao': 'Torta salgada de liquidificador.',
+        'custo': 25,
+        'tipo': 'salgada',
+    },
+    {
+        'nome': 'Pudim de Leite',
+        'descricao': 'Pudim sem furinhos com calda.',
+        'custo': 12,
+        'tipo': 'doce',
+    },
+    {
+        'nome': 'Empadão de Palmito',
+        'descricao': 'Massa podre que derrete na boca.',
+        'custo': 30,
+        'tipo': 'salgada',
+    },
+    {
+        'nome': 'Beijinho',
+        'descricao': 'Docinho de coco ralado e cravo.',
+        'custo': 2,
+        'tipo': 'doce',
+    },
+    {
+        'nome': 'Kibe Frito',
+        'descricao': 'Kibe tradicional temperado com hortelã.',
+        'custo': 6,
+        'tipo': 'salgada',
+    },
+    {
+        'nome': 'Torta de Limão',
+        'descricao': 'Massa com creme de limão e merengue.',
+        'custo': 22,
+        'tipo': 'doce',
+    },
+    {
+        'nome': 'Esfiha de Carne',
+        'descricao': 'Massa macia com carne moída.',
+        'custo': 4,
+        'tipo': 'salgada',
+    },
 ]
 
-cursor.executemany("""
-    INSERT INTO receita (nome, descricao, data_registro, custo, tipo_receita) 
-    VALUES (?, ?, ?, ?, ?);
-""", receitas)
+for item in lista_receitas:
+    Receita.objects.get_or_create(
+        nome=item['nome'],
+        defaults={
+            'descricao': item['descricao'],
+            'data_registro': hoje,
+            'custo': item['custo'],
+            'tipo_receita': item['tipo'],
+        },
+    )
 
-conexao.commit()
-conexao.close()
-
-print("Script de insert executado com sucesso! Banco populado.")
+print("Banco PostgreSQL populado com sucesso!")

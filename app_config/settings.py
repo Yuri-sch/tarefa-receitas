@@ -76,12 +76,32 @@ WSGI_APPLICATION = 'app_config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+import os
+import sys
+
+# detecta se o comando rodado no terminal foi "manage.py test"
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
+
+if TESTING:
+    # Durante os testes automatizados do CI, usa a memória RAM:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
-}
+else:
+    # Rodando pra valer no Docker, assume o PostgreSQL 100%:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'postgres'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+            'HOST': 'db',  # Nome do serviço do Postgres no docker-compose
+            'PORT': '5432',  # Porta interna nativa do motor
+        }
+    }
 
 
 # Password validation
