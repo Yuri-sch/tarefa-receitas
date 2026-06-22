@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 import os
+import sys
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -75,9 +76,6 @@ WSGI_APPLICATION = 'app_config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-
-import os
-import sys
 
 # detecta se o comando rodado no terminal foi "manage.py test"
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'

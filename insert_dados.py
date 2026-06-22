@@ -6,7 +6,7 @@ import os
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app_config.settings')
 django.setup()
 
-from receitas.models import Receita, Usuario
+from receitas.models import Receita, Usuario # noqa: E402
 
 print("Verificando/Inserindo Usuário admin...")
 usuario, criado = Usuario.objects.get_or_create(
