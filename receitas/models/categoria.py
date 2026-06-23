@@ -1,12 +1,13 @@
-# import math
-from django.db import models
+#import math
 
-class Categoria(models.Model):
-    descricao = models.CharField(max_length=100)
+#from django.db import models
 
-    class Meta:
-        db_table = 'categoria'
-        app_label = 'receitas'
+# class Categoria(models.Model):
+    # descricao = models.CharField(max_length=100)
 
-    def __str__(self):
-        return self.descricao
+    # class Meta:
+        # db_table = 'categoria'
+        # app_label = 'receitas'
+
+    #def __str__(self):
+        #return self.descricao
