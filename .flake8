@@ -1,4 +1,4 @@
 [flake8]
-exclude = .git, *migrations*, venv, env, __pycache__, *categoria.py
+exclude = .git, *migrations*, venv, env, __pycache__
 max-line-length = 119
 ignore = W291, W292, W293, W391, E261, E302, E701, E501
