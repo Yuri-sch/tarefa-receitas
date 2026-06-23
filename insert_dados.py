@@ -2,7 +2,6 @@ from datetime import date
 import django
 import os
 
-# Avisa o script autônomo sobre onde moram as configurações do Django:
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app_config.settings')
 django.setup()
 

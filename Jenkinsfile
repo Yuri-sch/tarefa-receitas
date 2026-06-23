@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Integração Contínua (CI)') {
+        stage('Integração') {
             steps {
                 echo 'Iniciando testes e validação de qualidade...'
                 sh '''
@@ -18,11 +18,11 @@ pipeline {
         stage('Aprovar Homologação') {
             steps {
                 // Isso gera a pausa visual e cria o botão verde com o texto personalizado
-                input message: 'O código passou no CI! Criar ambiente de Homologação?', ok: 'Aprovar e Fazer Deploy'
+                input message: 'O código passou no Ambiente de Integração! Criar ambiente de Homologação?', ok: 'Aprovar'
             }
         }
 
-        stage('Deploy Homologação') {
+        stage('Homologação') {
             steps {
                 echo 'Subindo ambiente de Homologação...'
                 withCredentials([usernamePassword(credentialsId: 'credenciais-gmail', passwordVariable: 'GMAIL_PASS', usernameVariable: 'GMAIL_USER')]) {
@@ -51,11 +51,11 @@ EOF
         stage('Aprovar Produção') {
             steps {
                 // Segunda pausa com botão antes de ir para produção
-                input message: 'A Homologação foi validada! Lançar em Produção?', ok: 'Lançar em Produção'
+                input message: 'Ambiente de homologação criado com sucesso! Lançar para Produção?', ok: 'Aprovar'
             }
         }
 
-        stage('Deploy Produção') {
+        stage('Produção') {
             steps {
                 echo 'Subindo ambiente de Produção...'
                 withCredentials([usernamePassword(credentialsId: 'credenciais-gmail', passwordVariable: 'GMAIL_PASS', usernameVariable: 'GMAIL_USER')]) {

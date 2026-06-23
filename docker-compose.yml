@@ -5,7 +5,7 @@ services:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
     ports:
-      # Agora a porta externa é injetada pelo script (padrão é 8000 se vazio)
+      # porta externa é injetada pelo script (padrão é 8000 se vazio)
       - "${WEB_PORT:-8000}:8000"
     env_file:
       - .env
