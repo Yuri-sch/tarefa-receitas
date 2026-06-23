@@ -52,10 +52,3 @@ class AuthTest(TestCase):
         self.assertRedirects(response, self.login_url)
         # A sessão deve ter sido limpa
         self.assertNotIn('usuario_id', self.client.session)
-
-    # Teste 9: A Prova dos Nove (Falha Proposital de Suíte)
-    def test_travar_esteira_com_matematica_absurda(self):
-        self.assertEqual(
-            1 + 1, 
-            5, 
-        )
